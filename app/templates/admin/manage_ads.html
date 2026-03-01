@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 style="color: var(--secondary);">Gestión de Publicidad</h1>
+        <a href="{{ url_for('admin.add_ad') }}" class="btn btn-primary">+ Nueva Publicidad</a>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; background: var(--glass); border-radius: 20px;">
+            <thead>
+                <tr style="background: rgba(255,255,255,0.1); text-align: left;">
+                    <th style="padding: 1.2rem;">Título / Comercio</th>
+                    <th style="padding: 1.2rem;">Posición</th>
+                    <th style="padding: 1.2rem;">Fechas</th>
+                    <th style="padding: 1.2rem;">Pago</th>
+                    <th style="padding: 1.2rem; text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ad in ads %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 1rem;">
+                        <strong>{{ ad.title }}</strong><br>
+                        <small style="opacity: 0.7;">{{ ad.line_1 or '' }} {{ ad.line_2 or '' }}</small>
+                    </td>
+                    <td style="padding: 1rem;">{{ ad.position|upper }}</td>
+                    <td style="padding: 1rem;">
+                        <small>{{ ad.start_date }} a {{ ad.end_date }}</small>
+                    </td>
+                    <td style="padding: 1rem; color: #4caf50;">${{ ad.amount_paid }}</td>
+                    <td style="padding: 1rem; text-align: center; display: flex; gap: 10px; justify-content: center;">
+                        <a href="{{ url_for('admin.edit_ad', ad_id=ad.id) }}" class="btn"
+                            style="background: rgba(33, 150, 243, 0.2); color: #2196f3; border: 1px solid rgba(33, 150, 243, 0.3);">Editar</a>
+                        <form action="{{ url_for('admin.delete_ad', ad_id=ad.id) }}" method="POST"
+                            onsubmit="return confirm('¿Eliminar esta publicidad?')">
+                            <button type="submit" class="btn"
+                                style="background: rgba(244, 67, 54, 0.2); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3);">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not ads %}
+                <tr>
+                    <td colspan="5" style="padding: 3rem; text-align: center; opacity: 0.5;">No hay publicidades
+                        registradas.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="{{ g.locale or 'es' }}" dir="{{ 'rtl' if g.locale == 'he' else 'ltr' }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shavua BeShavua{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('main.index') }}" class="logo">Shavua BeShavua</a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Cambiar menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="{{ url_for('main.index') }}" class="nav-item">{{ ('Home' if g.locale == 'en' else 'בית' if g.locale
+                == 'he' else
+                'Inicio') }}</a>
+            <a href="{{ url_for('main.donate') }}" class="nav-item" style="color: var(--accent); font-weight: 800;">{{
+                ('Donate' if
+                g.locale == 'en' else 'תרומה' if g.locale == 'he' else 'Donar') }}</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('user.halajot') }}" class="nav-item">{{ ('Learning' if g.locale == 'en' else 'למדו
+                הלכות' if g.locale ==
+                'he' else 'Estudiar Halajot') }}</a>
+            <a href="{{ url_for('user.profile') }}" class="user-profile-link">{{
+                ('Hello' if g.locale == 'en' else 'שלום' if
+                g.locale == 'he' else 'Hola') }}, {{ current_user.username }} ({{ current_user.points }} pts)</a>
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="nav-item">{{ ('Logout' if g.locale == 'en' else 'התנתק' if
+                g.locale == 'he'
+                else 'Cerrar Sesión') }}</a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="nav-item">{{ ('Login' if g.locale == 'en' else 'התחבר' if
+                g.locale == 'he' else
+                'Ingresar') }}</a>
+            <a href="{{ url_for('auth.signup') }}" class="nav-item">{{ ('Register' if g.locale == 'en' else 'הרשמה' if
+                g.locale == 'he'
+                else 'Registrarse') }}</a>
+            {% endif %}
+            <div class="lang-switcher">
+                <a href="?lang=es" class="lang-link {{ 'active' if g.locale == 'es' }}">ES</a>
+                <a href="?lang=en" class="lang-link {{ 'active' if g.locale == 'en' }}">EN</a>
+                <a href="?lang=he" class="lang-link {{ 'active' if g.locale == 'he' }}">HE</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Responsive Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Smooth transitions and micro-animations
+        document.querySelectorAll('a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // Close menu on link click (for mobile)
+                if (window.innerWidth <= 1024) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 800px;">
+    <h2 style="text-align: center; color: var(--secondary);">Agregar Pregunta</h2>
+    <form method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label>Pregunta (ES)</label>
+                <textarea name="text_es" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Pregunta (EN)</label>
+                <textarea name="text_en"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Pregunta (HE)</label>
+                <textarea name="text_he" dir="rtl"></textarea>
+            </div>
+        </div>
+
+        <h3>Opciones</h3>
+        <div style="display: grid; grid-template-columns: 50px 1fr 1fr 1fr; gap: 1rem; align-items: center;">
+            <div style="text-align: center;"><strong>A</strong></div>
+            <input type="text" name="a_es" placeholder="ES" required>
+            <input type="text" name="a_en" placeholder="EN">
+            <input type="text" name="a_he" placeholder="HE" dir="rtl">
+
+            <div style="text-align: center;"><strong>B</strong></div>
+            <input type="text" name="b_es" placeholder="ES" required>
+            <input type="text" name="b_en" placeholder="EN">
+            <input type="text" name="b_he" placeholder="HE" dir="rtl">
+
+            <div style="text-align: center;"><strong>C</strong></div>
+            <input type="text" name="c_es" placeholder="ES" required>
+            <input type="text" name="c_en" placeholder="EN">
+            <input type="text" name="c_he" placeholder="HE" dir="rtl">
+        </div>
+
+        <div class="form-group" style="margin-top: 2rem;">
+            <label>Opción Correcta</label>
+            <select name="correct" required>
+                <option value="a">A</option>
+                <option value="b">B</option>
+                <option value="c">C</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Guardar Pregunta</button>
+    </form>
+</div>
+{% endblock %}

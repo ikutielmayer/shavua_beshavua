@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <h2 style="text-align: center; color: var(--secondary);">Registrar Donación</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label>Nombre del Donante</label>
+            <input type="text" name="donor_name" required>
+        </div>
+        <div class="form-group">
+            <label>Monto ($)</label>
+            <input type="number" step="0.01" name="amount" required>
+        </div>
+        <div class="form-group">
+            <label>Motivo de la Donación</label>
+            <select name="type" id="donation_type" required onchange="updatePlaceholder()">
+                <option value="le'iluy nishmat">Le'iluy Nishmat (Elevación del alma)</option>
+                <option value="refua">Refua Shelema (Salud)</option>
+                <option value="hazlaja">Hazlaja (Éxito)</option>
+                <option value="otro">Otro Motivo</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label id="recipient_label">Nombre del Beneficiario</label>
+            <input type="text" name="recipient" placeholder="Ej: Rivka Live bat Rujel" required>
+        </div>
+        <script>
+            function updatePlaceholder() {
+                const type = document.getElementById('donation_type').value;
+                const label = document.getElementById('recipient_label');
+                if (type === 'le\'iluy nishmat') label.innerText = 'Nombre del Difunto (Nombre y nombre del padre/madre)';
+                else if (type === 'refua') label.innerText = 'Nombre del Enfermo (Nombre y nombre de la madre)';
+                else if (type === 'hazlaja') label.innerText = 'Nombre del Beneficiario';
+                else label.innerText = 'Detalle del Motivo y Nombre';
+            }
+        </script>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Registrar</button>
+    </form>
+</div>
+{% endblock %}

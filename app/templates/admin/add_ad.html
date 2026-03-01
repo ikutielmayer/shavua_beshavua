@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%; max-width: 600px; margin: 0 auto;">
+    <h1 style="color: var(--secondary); margin-bottom: 2rem;">Nueva Publicidad</h1>
+
+    <div class="stat-card" style="padding: 2rem;">
+        <form method="POST">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">Nombre del Comercio / Título</label>
+                <input type="text" name="title" required
+                    style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; opacity: 0.8;">Mensaje (Máx 4 líneas)</label>
+                <input type="text" name="line_1" placeholder="Línea 1"
+                    style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(197, 160, 89, 0.5); color: white; border-radius: 5px; margin-bottom: 5px;">
+                <input type="text" name="line_2" placeholder="Línea 2"
+                    style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(197, 160, 89, 0.5); color: white; border-radius: 5px; margin-bottom: 5px;">
+                <input type="text" name="line_3" placeholder="Línea 3"
+                    style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(197, 160, 89, 0.5); color: white; border-radius: 5px; margin-bottom: 5px;">
+                <input type="text" name="line_4" placeholder="Línea 4"
+                    style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(197, 160, 89, 0.5); color: white; border-radius: 5px;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Dirección</label>
+                    <input type="text" name="address"
+                        style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Teléfono</label>
+                    <input type="text" name="phone"
+                        style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">URL de la Imagen (Banner)</label>
+                <input type="text" name="image_url" placeholder="https://..."
+                    style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">URL de Destino (Web del comercio)</label>
+                <input type="text" name="link_url" placeholder="https://..."
+                    style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Posición</label>
+                    <select name="position"
+                        style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+                        <option value="right">Derecha</option>
+                        <option value="left">Izquierda</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Monto Cobrado</label>
+                    <input type="number" step="0.01" name="amount_paid" required
+                        style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Inicio</label>
+                    <input type="date" name="start_date" required
+                        style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Fin</label>
+                    <input type="date" name="end_date" required
+                        style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 8px;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Cargar Publicidad</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

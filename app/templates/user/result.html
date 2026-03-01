@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="text-align: center;">
+    <h2 style="color: var(--secondary);">{{ ('Quiz Result!' if g.locale == 'en' else 'תוצאות השאלון!' if g.locale ==
+        'he' else '¡Resultado del Quiz!') }}</h2>
+    <div style="font-size: 4rem; font-weight: 800; margin: 2rem 0;">
+        {{ score }} / {{ total }}
+    </div>
+    <p style="font-size: 1.2rem;">{{ ('Your score:' if g.locale == 'en' else 'הציון שלך:' if g.locale == 'he' else 'Tu
+        puntaje:') }} <strong>{{ "{:.0f}%".format(percentage) }}</strong></p>
+
+    {% if is_eligible %}
+    <div
+        style="background: rgba(76, 175, 80, 0.2); color: #4caf50; padding: 1.5rem; border-radius: 10px; margin-top: 2rem; border: 1px solid #4caf50;">
+        {% if is_halaja %}
+        <h3>{{ ('🎉 Points Earned!' if g.locale == 'en' else '🎉 נקודות נצברו!' if g.locale == 'he' else '🎉 ¡Puntos
+            Ganados!') }}</h3>
+        <p>{{ ('You have successfully completed this Halaja lesson and earned double points.' if g.locale == 'en' else
+            'השלמת בהצלחה את שיעור ההלכה וצברת נקודות כפולות.' if g.locale == 'he' else 'Has completado con éxito esta
+            lección de Halajá y has ganado puntos dobles.') }}</p>
+        {% else %}
+        <h3>{{ ('🎉 You are Eligible!' if g.locale == 'en' else '🎉 אתם זכאים!' if g.locale == 'he' else '🎉 ¡Eres
+            Elegible!') }}</h3>
+        <p>{{ ('You have exceeded 70% and entered this month\'s raffle.' if g.locale == 'en' else 'עברתם את ה-70%
+            ונכנסתם להגרלה של החודש.' if g.locale == 'he' else 'Has superado el 70% correcto y has entrado en el sorteo
+            de este mes.') }}</p>
+        {% endif %}
+    </div>
+    {% else %}
+    <div
+        style="background: rgba(244, 67, 54, 0.2); color: #f44336; padding: 1.5rem; border-radius: 10px; margin-top: 2rem; border: 1px solid #f44336;">
+        <h3>{{ ('Keep studying' if g.locale == 'en' else 'המשיכו ללמוד' if g.locale == 'he' else 'Sigue estudiando') }}
+        </h3>
+        <p>{{ ('You need at least 70% to enter the raffle. Try again next week!' if g.locale == 'en' else 'צריך לפחות
+            70% כדי להיכנס להגרלה. נסו שוב בשבוע הבא!' if g.locale == 'he' else 'Necesitas al menos un 70% para entrar
+            en el sorteo. ¡Inténtalo la próxima semana!') }}</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 3rem; text-align: left;">
+        <h3 style="color: var(--secondary); text-align: center; margin-bottom: 1.5rem;">{{ ('Answer Review' if g.locale
+            == 'en' else 'סקירת תשובות' if g.locale == 'he' else 'Revisión de Respuestas') }}</h3>
+        {% for item in results_detail %}
+        <div
+            style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; border-left: 5px solid {{ '#4caf50' if item.is_correct else '#f44336' }};">
+            <p style="font-weight: 600; margin-bottom: 0.5rem;">
+                {{ item.question_en if g.locale == 'en' else item.question_he if g.locale == 'he' else item.question_es
+                }}
+            </p>
+            {% if item.is_correct %}
+            <p style="color: #4caf50; font-size: 0.9rem;">✓ {{ ('Correct:' if g.locale == 'en' else 'נכון:' if g.locale
+                == 'he' else 'Correcto:') }} {{ item.correct_answer_en if g.locale == 'en' else item.correct_answer_he
+                if g.locale == 'he' else item.correct_answer_es }}</p>
+            {% else %}
+            <p style="color: #f44336; font-size: 0.9rem; margin-bottom: 0.3rem;">✗ {{ ('Your answer:' if g.locale ==
+                'en' else 'התשובה שלך:' if g.locale == 'he' else 'Tu respuesta:') }} {{ item.user_answer_en if g.locale
+                == 'en' else item.user_answer_he if g.locale == 'he' else item.user_answer_es or '---' }}</p>
+            <p style="color: #4caf50; font-size: 0.9rem;">→ {{ ('Correct answer:' if g.locale == 'en' else 'תשובה
+                נכונה:' if g.locale == 'he' else 'Respuesta correcta:') }} {{ item.correct_answer_en if g.locale == 'en'
+                else item.correct_answer_he if g.locale == 'he' else item.correct_answer_es }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 3rem;">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">{{ ('Back to Home' if g.locale == 'en' else 'חזרה
+            לדף הבית' if g.locale == 'he' else 'Volver al Inicio') }}</a>
+    </div>
+</div>
+{% endblock %}

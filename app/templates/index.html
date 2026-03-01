@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-layout" style="display: grid; grid-template-columns: 200px 1fr 200px; gap: 2rem; padding: 0 2%;">
+
+    <!-- Left Sidebar Ads -->
+    <aside class="sidebar-ads left-ads" style="padding-top: 50px;">
+        {% for ad in left_ads %}
+        <a href="{{ ad.link_url }}" target="_blank" class="ad-banner"
+            style="display: block; margin-bottom: 2rem; text-decoration: none; color: inherit; transition: transform 0.3s;"
+            onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="stat-card" style="padding: 1rem; text-align: center; border: 1px solid var(--secondary);">
+                {% if ad.image_url %}
+                <img src="{{ ad.image_url }}" alt="{{ ad.title }}"
+                    style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+                {% endif %}
+                <h4
+                    style="color: var(--secondary); margin-bottom: 0.5rem; border-bottom: 1px solid rgba(197, 160, 89, 0.3); padding-bottom: 5px;">
+                    {{ ad.title }}</h4>
+                <div style="font-size: 0.85rem; line-height: 1.4; margin-bottom: 10px; color: white;">
+                    {% if ad.line_1 %}<div style="margin-bottom: 2px;">{{ ad.line_1 }}</div>{% endif %}
+                    {% if ad.line_2 %}<div style="margin-bottom: 2px;">{{ ad.line_2 }}</div>{% endif %}
+                    {% if ad.line_3 %}<div style="margin-bottom: 2px;">{{ ad.line_3 }}</div>{% endif %}
+                    {% if ad.line_4 %}<div style="margin-bottom: 2px;">{{ ad.line_4 }}</div>{% endif %}
+                </div>
+                <div
+                    style="font-size: 0.75rem; opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px;">
+                    {% if ad.address %}<div style="margin-bottom: 2px;">📍 {{ ad.address }}</div>{% endif %}
+                    {% if ad.phone %}<div>📞 {{ ad.phone }}</div>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <h1>{{ ('Torah and Charity every week' if g.locale == 'en' else 'תורה וצדקה כל שבוע' if g.locale == 'he'
+                else 'Torá
+                y Tzedaká cada semana') }}</h1>
+            {% if current_parasha %}
+            <h2 style="color: var(--secondary); margin-bottom: 1rem;">
+                {{ ('Current Parasha' if g.locale == 'en' else 'פרשת השבוע' if g.locale == 'he' else 'Parashá de la
+                semana') }}:
+                {{ current_parasha.name_en if g.locale == 'en' else current_parasha.name_he if g.locale == 'he' else
+                current_parasha.name_es }}
+            </h2>
+            {% endif %}
+            <p>{{ ('Participate by answering about the Parasha and enter the monthly raffle.' if g.locale == 'en' else
+                'השתתפו
+                במענה על הפרשה והיכנסו להגרלה החודשית.' if g.locale == 'he' else 'Participa contestando sobre la Parashá
+                y entra
+                en el sorteo mensual.') }}</p>
+            <div style="margin-top: 2rem;">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('user.participate') }}" class="btn btn-primary">{{ ('Participate Now' if g.locale ==
+                    'en'
+                    else 'השתתף עכשיו' if g.locale == 'he' else 'Participar Ahora') }}</a>
+                {% else %}
+                <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">{{ ('Start Now' if g.locale == 'en' else
+                    'התחל
+                    עכשיו' if g.locale == 'he' else 'Comenzar Ahora') }}</a>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Halajot Promotion Section -->
+        <section style="padding: 20px 5%; max-width: 1000px; margin: -2rem auto 2rem;">
+            <div class="stat-card"
+                style="background: linear-gradient(135deg, rgba(197, 160, 89, 0.2), rgba(0, 0, 0, 0.4)); border: 1px solid var(--secondary); display: flex; align-items: center; justify-content: space-between; padding: 2rem; gap: 2rem; flex-wrap: wrap; text-align: left;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h2 style="color: var(--secondary); margin-bottom: 0.5rem; font-size: 1.8rem;">
+                        {{ ('Study Halajot and Earn Double Points!' if g.locale == 'en' else 'למדו הלכות וצברו ניקוד
+                        כפול!' if
+                        g.locale == 'he' else '¡Estudia Halajot y suma puntos dobles!') }}
+                    </h2>
+                    <p style="opacity: 0.9; font-size: 1.1rem;">
+                        {{ ('Master the laws of Shabbat, Kashrut, and more while increasing your score.' if g.locale ==
+                        'en'
+                        else 'התמחו בהלכות שבת, כשרות ועוד תוך הגדלת הניקוד שלכם.' if g.locale == 'he' else 'Domina las
+                        leyes de
+                        Shabat, Kashrut y más mientras aumentas tu puntuación.') }}
+                    </p>
+                </div>
+                <a href="{{ url_for('user.halajot') }}" class="btn btn-primary"
+                    style="padding: 1rem 2rem; font-size: 1.1rem; white-space: nowrap;">
+                    {{ ('Start Studying' if g.locale == 'en' else 'התחל ללמוד' if g.locale == 'he' else 'Empezar a
+                    Estudiar') }}
+                </a>
+            </div>
+        </section>
+
+        {% if latest_winner %}
+        <!-- Winner Announcement Section -->
+        <section style="padding: 20px 5%; max-width: 1000px; margin: 0 auto 2rem;">
+            <div
+                style="background: rgba(76, 175, 80, 0.1); border: 2px solid #4caf50; border-radius: 20px; padding: 2rem; text-align: center; position: relative; overflow: hidden;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                <h2
+                    style="color: #4caf50; margin-bottom: 0.5rem; font-size: 2rem; text-transform: uppercase; letter-spacing: 2px;">
+                    {{ ('Latest Winner' if g.locale == 'en' else 'הזוכה האחרון' if g.locale == 'he' else 'Último
+                    Ganador') }}
+                </h2>
+                <div style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">
+                    {{ latest_winner.winner.username[:2] }}***{{ latest_winner.winner.username[-2:] if
+                    latest_winner.winner.username|length > 4 else "" }}
+                </div>
+                <div style="color: var(--secondary); font-size: 1.8rem; font-weight: 800;">
+                    ${{ "{:,.2f}".format(latest_winner.amount) }}
+                </div>
+                <p style="opacity: 0.7; font-size: 0.9rem; margin-top: 1rem;">
+                    {{ latest_winner.timestamp.strftime('%d/%m/%Y') }}
+                </p>
+            </div>
+        </section>
+        {% endif %}
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>{{ ('Prize Pool' if g.locale == 'en' else 'קופת ההגרלה' if g.locale == 'he' else 'Pozo del Sorteo')
+                    }}</h3>
+                <div class="value">${{ "{:,.2f}".format(prize_pool) }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>{{ ('Total Donors' if g.locale == 'en' else 'סך הכל תורמים' if g.locale == 'he' else 'Total
+                    Donantes') }}
+                </h3>
+                <div class="value">{{ total_donors }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>{{ ('Total Participants' if g.locale == 'en' else 'סך הכל משתתפים' if g.locale == 'he' else 'Total
+                    de
+                    Participantes') }}</h3>
+                <div class="value">{{ total_participants }}</div>
+            </div>
+        </div>
+
+        <section style="padding: 50px 5%; max-width: 800px; margin: 0 auto;">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--secondary);">
+                {{ translate('latest_donations') }}
+            </h2>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+                {% for donation in donations %}
+                <div class="stat-card"
+                    style="padding: 2rem; border-left: 5px solid var(--secondary); background: var(--glass); display: flex; flex-direction: column; gap: 0.5rem; text-align: left;">
+                    <div style="display: flex; justify-content: flex-end; align-items: center;">
+                        <span style="font-size: 0.8rem; opacity: 0.6;">{{ donation.timestamp.strftime('%d/%m/%Y')
+                            }}</span>
+                    </div>
+
+                    <div style="font-size: 1.1rem; margin-top: 5px;">
+                        {% if donation.donation_type == 'le\'iluy nishmat' %}
+                        <span style="color: var(--secondary); font-weight: 700;">{{ translate('leiluy_nishmat')
+                            }}</span>
+                        {% elif donation.donation_type == 'refua' %}
+                        <span style="color: var(--secondary); font-weight: 700;">{{ translate('refua') }}</span>
+                        {% elif donation.donation_type == 'hazlaja' %}
+                        <span style="color: var(--secondary); font-weight: 700;">{{ translate('hazlaja') }}</span>
+                        {% else %}
+                        <span style="color: var(--secondary); font-weight: 700;">{{ translate('donation') }}</span>
+                        {% endif %}
+                        <strong style="font-size: 1.2rem;">{{ donation.recipient_name }}</strong>
+                    </div>
+
+                    <div
+                        style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        {{ translate('donated_by') }}: <strong>{{ donation.display_name }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section style="padding: 50px 5%; max-width: 800px; margin: 0 auto;">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--secondary);">
+                {{ ('Recent Participants' if g.locale == 'en' else 'משתתפים אחרונים' if g.locale == 'he' else
+                'Participantes
+                Recientes') }}
+            </h2>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                {% for p in recent_participations %}
+                <div class="stat-card"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;">
+                    <span><strong>{{ p.masked_user }}</strong></span>
+                    <span style="color: var(--secondary); font-weight: 800;">{{ p.percentage }}%</span>
+                    <span style="font-size: 0.8rem; opacity: 0.5;">{{ p.timestamp.strftime('%d/%m %H:%M') }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <!-- Right Sidebar Ads -->
+    <aside class="sidebar-ads right-ads" style="padding-top: 50px;">
+        {% for ad in right_ads %}
+        <a href="{{ ad.link_url }}" target="_blank" class="ad-banner"
+            style="display: block; margin-bottom: 2rem; text-decoration: none; color: inherit; transition: transform 0.3s;"
+            onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="stat-card" style="padding: 1rem; text-align: center; border: 1px solid var(--secondary);">
+                {% if ad.image_url %}
+                <img src="{{ ad.image_url }}" alt="{{ ad.title }}"
+                    style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+                {% endif %}
+                <h4
+                    style="color: var(--secondary); margin-bottom: 0.5rem; border-bottom: 1px solid rgba(197, 160, 89, 0.3); padding-bottom: 5px;">
+                    {{ ad.title }}</h4>
+                <div style="font-size: 0.85rem; line-height: 1.4; margin-bottom: 10px; color: white;">
+                    {% if ad.line_1 %}<div style="margin-bottom: 2px;">{{ ad.line_1 }}</div>{% endif %}
+                    {% if ad.line_2 %}<div style="margin-bottom: 2px;">{{ ad.line_2 }}</div>{% endif %}
+                    {% if ad.line_3 %}<div style="margin-bottom: 2px;">{{ ad.line_3 }}</div>{% endif %}
+                    {% if ad.line_4 %}<div style="margin-bottom: 2px;">{{ ad.line_4 }}</div>{% endif %}
+                </div>
+                <div
+                    style="font-size: 0.75rem; opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px;">
+                    {% if ad.address %}<div style="margin-bottom: 2px;">📍 {{ ad.address }}</div>{% endif %}
+                    {% if ad.phone %}<div>📞 {{ ad.phone }}</div>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </aside>
+</div>
+
+<style>
+    @media (max-width: 1200px) {
+        .home-layout {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+
+        .sidebar-ads {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            padding-top: 20px !important;
+        }
+
+        .ad-banner {
+            width: 250px;
+            margin-bottom: 0 !important;
+        }
+
+        .left-ads {
+            order: 2;
+        }
+
+        /* Put ads after hero or before content? Let's stack them nicely */
+        main {
+            order: 1;
+        }
+
+        .right-ads {
+            order: 3;
+        }
+    }
+</style>
+{% endblock %}

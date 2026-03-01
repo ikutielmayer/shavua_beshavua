@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%;">
+    <h1 style="color: var(--secondary); margin-bottom: 2rem;">Panel de Administración</h1>
+
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+        <a href="{{ url_for('admin.add_parasha') }}" class="btn btn-primary">Nueva Parashá</a>
+        <a href="{{ url_for('admin.add_donation') }}" class="btn btn-primary">Registrar Donación</a>
+        <a href="{{ url_for('admin.manage_ads') }}" class="btn btn-primary"
+            style="background: #2196f3; border-color: #1e88e5;">Gestionar Publicidad</a>
+    </div>
+
+    <!-- System Settings -->
+    <div class="stat-card" style="margin-bottom: 3rem; padding: 2rem; border-left: 5px solid var(--secondary);">
+        <h2 style="color: var(--secondary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">⚙️</span> Configuraciones del Sistema
+        </h2>
+        <form action="{{ url_for('admin.update_settings') }}" method="POST"
+            style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-end;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Comisión de la
+                    Plataforma (%)</label>
+                <input type="number" name="commission_pct" value="{{ commission_pct }}"
+                    style="padding: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 5px; width: 100px;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Intervalo Sorteo
+                    (Parashiot)</label>
+                <input type="number" name="raffle_interval" value="{{ raffle_interval }}"
+                    style="padding: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid var(--secondary); color: white; border-radius: 5px; width: 100px;">
+            </div>
+            <button type="submit" class="btn"
+                style="background: var(--secondary); color: var(--primary); font-weight: 700;">Guardar Cambios</button>
+        </form>
+    </div>
+
+
+    <!-- Raffle Management -->
+    <div class="stat-card"
+        style="margin-bottom: 4rem; padding: 2rem; border: 2px solid var(--secondary); background: rgba(197, 160, 89, 0.05);">
+        <h2 style="color: var(--secondary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">🎲</span> Gestión del Sorteo
+        </h2>
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-end;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Intervalo de
+                    Sorteo</label>
+                <div style="font-size: 1.2rem; font-weight: 800;">{{ raffle_interval }} Parashiot</div>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px;">Último
+                    Sorteo</label>
+                <div style="font-size: 1.2rem; font-weight: 800;">{{ last_raffle_date }}</div>
+            </div>
+            <div style="flex: 1;"></div>
+            <form action="{{ url_for('admin.perform_raffle') }}" method="POST"
+                onsubmit="return confirm('¿Estás seguro de realizar el sorteo? Esto reseteará todos los puntos a CERO.')">
+                <button type="submit" class="btn btn-primary"
+                    style="padding: 15px 30px; font-weight: 800; background: #4caf50; border-color: #43a047;">
+                    REALIZAR SORTEO AHORA
+                </button>
+            </form>
+        </div>
+        <p style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.8; font-style: italic;">
+            * El pozo para el ganador será del 80% de las donaciones confirmadas desde el último sorteo.
+        </p>
+    </div>
+
+    <!-- Stats Summary for Admin -->
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;">
+        <div class="stat-card" style="padding: 1.5rem; border-left: 5px solid #4caf50;">
+            <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">Total Confirmado</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #4caf50;">${{ "{:,.2f}".format(total_confirmed) }}
+            </div>
+        </div>
+        <div class="stat-card" style="padding: 1.5rem; border-left: 5px solid var(--secondary);">
+            <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">Comisión Acumulada (20%)</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--secondary);">${{
+                "{:,.2f}".format(total_commission) }}</div>
+        </div>
+        <div class="stat-card" style="padding: 1.5rem; border-left: 5px solid #2196f3;">
+            <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">Usuarios Totales</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #2196f3;">{{ users|length }}</div>
+        </div>
+        <div class="stat-card" style="padding: 1.5rem; border-left: 5px solid #e91e63;">
+            <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">Ingresos Publicidad (Mes)</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #e91e63;">${{ "{:,.2f}".format(total_ad_revenue) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Gestión de Usuarios -->
+    <div style="margin-bottom: 5rem;">
+        <h2 style="color: var(--secondary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">👥</span> Gestión de Usuarios
+        </h2>
+        <div style="overflow-x: auto;">
+            <table
+                style="width: 100%; border-collapse: collapse; background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border);">
+                <thead>
+                    <tr style="background: rgba(255,255,255,0.1); text-align: left;">
+                        <th style="padding: 1.2rem;">Usuario</th>
+                        <th style="padding: 1.2rem;">Email</th>
+                        <th style="padding: 1.2rem;">Rol</th>
+                        <th style="padding: 1.2rem;">Puntos</th>
+                        <th style="padding: 1.2rem; text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr style="border-bottom: 1px solid var(--glass-border); transition: background 0.3s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.03)'"
+                        onmouseout="this.style.background='transparent'">
+                        <td style="padding: 1rem;">
+                            <strong>{{ u.username }}</strong><br>
+                            <small style="opacity: 0.7;">{{ u.first_name or '' }} {{ u.last_name or '' }}</small>
+                        </td>
+                        <td style="padding: 1rem;">{{ u.email }}</td>
+                        <td style="padding: 1rem;">
+                            <span
+                                style="padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: 700; background: {{ 'rgba(197, 160, 89, 0.2)' if u.role == 'admin' else 'rgba(100, 181, 246, 0.15)' }}; color: {{ '#c5a059' if u.role == 'admin' else '#64b5f6' }}; border: 1px solid {{ 'rgba(197, 160, 89, 0.3)' if u.role == 'admin' else 'rgba(100, 181, 246, 0.3)' }};">
+                                {{ u.role|upper }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">{{ u.points or 0 }}</td>
+                        <td style="padding: 1rem; text-align: center;">
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="btn"
+                                    style="padding: 6px 12px; font-size: 0.8rem; background: rgba(255,255,255,0.1);">Editar</a>
+                                <form action="{{ url_for('admin.delete_user', user_id=u.id) }}" method="POST"
+                                    onsubmit="return confirm('¿Estás seguro de eliminar a este usuario?')">
+                                    <button type="submit" class="btn"
+                                        style="padding: 6px 12px; font-size: 0.8rem; background: rgba(244, 67, 54, 0.2); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3);">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Gestión de Parashot -->
+    <div style="margin-bottom: 5rem;">
+        <h2 style="color: var(--secondary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">📖</span> Parashot y Preguntas
+        </h2>
+        <div class="stats-container"
+            style="padding: 0; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+            {% for parasha in parashot %}
+            <div class="stat-card" style="text-align: left; padding: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem;">{{ parasha.name_es }}</h3>
+                <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem;">📅 {{
+                    parasha.week_start.strftime('%d/%m/%y') }} - {{ parasha.week_end.strftime('%d/%m/%y') }}</div>
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                        <span>Preguntas cargadas</span>
+                        <strong>{{ parasha.questions|length }} / 10</strong>
+                    </div>
+                    <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div
+                            style="width: {{ [parasha.questions|length / 10 * 100, 100]|min }}%; height: 100%; background: var(--secondary);">
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <a href="{{ url_for('admin.add_question', parasha_id=parasha.id) }}" class="btn btn-primary"
+                        style="padding: 8px 15px; font-size: 0.8rem; flex: 1; text-align: center;">+ Agregar</a>
+                    <a href="{{ url_for('admin.manage_questions', parasha_id=parasha.id) }}" class="btn"
+                        style="padding: 8px 15px; font-size: 0.8rem; flex: 1; text-align: center; background: rgba(255,255,255,0.1);">Ver/Editar</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Gestión de Donaciones -->
+    <div style="margin-bottom: 3rem;">
+        <h2 style="color: var(--secondary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">💰</span> Gestión de Donaciones
+        </h2>
+        <div style="overflow-x: auto;">
+            <table
+                style="width: 100%; border-collapse: collapse; background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border);">
+                <thead>
+                    <tr style="background: rgba(255,255,255,0.1); text-align: left;">
+                        <th style="padding: 1.2rem;">Donante</th>
+                        <th style="padding: 1.2rem;">Monto</th>
+                        <th style="padding: 1.2rem;">Detalle / Beneficiario</th>
+                        <th style="padding: 1.2rem;">Estado</th>
+                        <th style="padding: 1.2rem; text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in donations %}
+                    <tr
+                        style="border-bottom: 1px solid var(--glass-border); background: {{ 'rgba(255, 193, 7, 0.05)' if d.status == 'pending' else 'transparent' }}">
+                        <td style="padding: 1rem;">
+                            <strong>{{ d.donor_name }}</strong><br>
+                            <small style="opacity: 0.6;">{{ d.timestamp.strftime('%d/%m %H:%M') }}</small>
+                        </td>
+                        <td style="padding: 1rem; color: #4caf50; font-weight: 700;">${{ d.amount|int }}</td>
+                        <td style="padding: 1rem;">
+                            <span style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">{{ d.donation_type
+                                }}</span><br>
+                            {{ d.recipient_name }}
+                        </td>
+                        <td style="padding: 1rem;">
+                            <span
+                                style="padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: 700; background: {{ 'rgba(255, 193, 7, 0.2)' if d.status == 'pending' else 'rgba(76, 175, 80, 0.2)' }}; color: {{ '#ff9800' if d.status == 'pending' else '#4caf50' }}; border: 1px solid {{ 'rgba(255, 193, 7, 0.3)' if d.status == 'pending' else 'rgba(76, 175, 80, 0.3)' }};">
+                                {{ d.status|upper }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem; text-align: center;">
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                {% if d.status == 'pending' %}
+                                <a href="{{ url_for('admin.confirm_donation', donation_id=d.id) }}"
+                                    class="btn btn-primary" style="padding: 6px 12px; font-size: 0.75rem;">Confirmar
+                                    Pago</a>
+                                {% endif %}
+                                <form action="{{ url_for('admin.delete_donation', donation_id=d.id) }}" method="POST"
+                                    onsubmit="return confirm('¿Estás seguro de eliminar esta donación?')">
+                                    <button type="submit" class="btn"
+                                        style="padding: 6px 12px; font-size: 0.75rem; background: rgba(244, 67, 54, 0.1); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.2);">X</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

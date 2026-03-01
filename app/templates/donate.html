@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%; max-width: 800px; margin: 0 auto; text-align: center;">
+    <h1 style="color: var(--secondary); margin-bottom: 2rem;">
+        {{ ('Make a Donation' if g.locale == 'en' else 'תרומה' if g.locale == 'he' else 'Realizar una Donación') }}
+    </h1>
+
+    <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+        {{ ('Your support helps maintain this project and lift souls. Choose your preferred method below:' if g.locale
+        == 'en' else 'תמיכתכם עוזרת לתחזק את הפרויקט ולעילוי נשמות. בחרו את הדרך המועדפת עליכם:' if g.locale == 'he'
+        else 'Tu apoyo ayuda a mantener este proyecto y elevar almas. Elige tu método preferido a continuación:') }}
+    </p>
+
+    <!-- Quick Donation Buttons -->
+    <div style="margin-bottom: 4rem;">
+        <h3 style="color: var(--secondary); margin-bottom: 1.5rem; font-size: 1.4rem;">
+            {{ ('Quick Donation' if g.locale == 'en' else 'תרומה מהירה' if g.locale == 'he' else 'Donación Rápida') }}
+        </h3>
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; justify-content: center;">
+            <button type="button" class="quick-donation-btn" onclick="setQuickAmount(18)">
+                <span class="symbol"> חי </span>
+                <span class="value">$18</span>
+                <span class="label">Hai</span>
+            </button>
+            <button type="button" class="quick-donation-btn" onclick="setQuickAmount(26)">
+                <span class="symbol"> הוי"ה </span>
+                <span class="value">$26</span>
+                <span class="label">Shem Hashem</span>
+            </button>
+            <button type="button" class="quick-donation-btn" onclick="setQuickAmount(36)">
+                <span class="symbol"> חי × 2 </span>
+                <span class="value">$36</span>
+                <span class="label">Doble Hai</span>
+            </button>
+            <button type="button" class="quick-donation-btn" onclick="setQuickAmount(52)">
+                <span class="symbol"> הוי"ה × 2 </span>
+                <span class="value">$52</span>
+                <span class="label">Doble Shem</span>
+            </button>
+            <button type="button" class="quick-donation-btn" onclick="setQuickAmount(180)">
+                <span class="symbol"> חי × 10 </span>
+                <span class="value">$180</span>
+                <span class="label">Tzedaká</span>
+            </button>
+            <button type="button" class="quick-donation-btn" onclick="setQuickAmount(260)">
+                <span class="symbol"> הוי"ה × 10 </span>
+                <span class="value">$260</span>
+                <span class="label">Kodesh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Donation Methods Grid -->
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+
+        <!-- BIT -->
+        <div class="stat-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #00c8f4; background: rgba(0, 200, 244, 0.05);">
+            <div style="font-size: 2.5rem; font-weight: 800; color: #00c8f4; margin-bottom: 1rem;">bit</div>
+            <h3 style="color: #fff;">{{ ('Pay with Bit' if g.locale == 'en' else 'תשלום ב-Bit' if g.locale == 'he' else
+                'Pagar con Bit') }}</h3>
+            <p style="font-size: 1.1rem; font-weight: 600;">+972 054 6544944</p>
+            <p style="font-size: 0.8rem; opacity: 0.7;">{{ ('Send your donation via Bit app' if g.locale == 'en' else
+                'שלחו את התרומה דרך אפליקציית ביט' if g.locale == 'he' else 'Envía tu donación por la app Bit') }}</p>
+            <a href="tel:+9720546544944" class="btn" style="background: #00c8f4; color: #fff; margin-top: 1rem;">{{
+                ('Open Bit / Call' if g.locale == 'en' else 'פתח ביט / התקשר' if g.locale == 'he' else 'Abrir Bit /
+                Llamar') }}</a>
+        </div>
+
+        <!-- TARJETA -->
+        <div class="stat-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">💳</div>
+            <h3>{{ ('Credit Card' if g.locale == 'en' else 'כרטיס אשראי' if g.locale == 'he' else 'Tarjeta de Crédito')
+                }}</h3>
+            <p style="font-size: 0.8rem; opacity: 0.7;">{{ ('Coming soon online' if g.locale == 'en' else 'בקרוב זמין
+                אונליין' if g.locale == 'he' else 'Próximamente disponible online') }}</p>
+            <button class="btn btn-primary" style="margin-top: 1rem;"
+                onclick="alert('{{ ('Integration in progress' if g.locale == 'en' else 'אינטגרציה בתהליך' if g.locale == 'he' else 'Integración en proceso') }}')">
+                {{ ('Pay with Card' if g.locale == 'en' else 'שלם בכרטיס' if g.locale == 'he' else 'Pagar con Tarjeta')
+                }}
+            </button>
+        </div>
+
+        <!-- DEPOSITO -->
+        <div class="stat-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏦</div>
+            <h3>{{ ('Bank Transfer / Deposit' if g.locale == 'en' else 'העברה בנקאית / הפקדה' if g.locale == 'he' else
+                'Depósito / Transferencia') }}</h3>
+            <p style="font-size: 0.8rem; opacity: 0.7;">{{ ('Ask for bank details' if g.locale == 'en' else 'בקש פרטי
+                בנק' if g.locale == 'he' else 'Solicita los datos CBU') }}</p>
+            <a href="mailto:admin@shavuabeshavua.com" class="btn btn-primary" style="margin-top: 1rem;">{{ ('Check
+                Details' if g.locale == 'en' else 'בדוק פרטים' if g.locale == 'he' else 'Consultar Datos') }}</a>
+        </div>
+
+    </div>
+
+    <div
+        style="max-width: 700px; margin: 0 auto; background: var(--glass); border: 1px solid var(--glass-border); padding: 3rem; border-radius: 20px; text-align: left;">
+        <h2 style="color: var(--secondary); text-align: center; margin-bottom: 0.5rem;">
+            {{ ('Report My Donation' if g.locale == 'en' else 'דיווח על תרומה' if g.locale == 'he' else 'Informar mi
+            Donación') }}
+        </h2>
+        <p style="text-align: center; font-size: 0.9rem; margin-bottom: 2rem; opacity: 0.8;">
+            {{ ('If you already paid via Bit or Transfer, fill these details to register it.' if g.locale == 'en' else
+            'אם כבר שילמתם בביט או העברה, מלאו את הפרטים כדי שנרשום זאת.' if g.locale == 'he' else 'Si ya realizaste el
+            pago por Bit o transferencia, completa estos datos para que lo registremos.') }}
+        </p>
+
+        <form action="{{ url_for('main.report_donation') }}" method="POST" id="donationForm">
+
+            <!-- Step 1: Duration type -->
+            <div class="form-group">
+                <label style="color: var(--secondary); font-weight: 700; font-size: 1rem;">
+                    {{ ('How long would you like to donate?' if g.locale == 'en' else 'לכמה זמן תרצו לתרום?' if g.locale
+                    == 'he' else '¿Por cuánto tiempo quieres donar?') }}
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 0.5rem;">
+                    <label class="duration-option" for="dur_single">
+                        <input type="radio" name="duration_type" id="dur_single" value="single" checked
+                            onchange="showDurationPanel(this.value)">
+                        <div class="dur-card">
+                            <div style="font-size: 1.5rem;">📅</div>
+                            <strong>{{ ('This week\'s Parasha' if g.locale == 'en' else 'פרשת השבוע' if g.locale == 'he'
+                                else 'Parashá de esta semana') }}</strong>
+                        </div>
+                    </label>
+                    <label class="duration-option" for="dur_monthly">
+                        <input type="radio" name="duration_type" id="dur_monthly" value="monthly"
+                            onchange="showDurationPanel(this.value)">
+                        <div class="dur-card">
+                            <div style="font-size: 1.5rem;">🗓️</div>
+                            <strong>{{ ('Monthly (~4 weeks)' if g.locale == 'en' else 'חודשי (~4 שבועות)' if g.locale ==
+                                'he' else 'Mensual (~4 semanas)') }}</strong>
+                        </div>
+                    </label>
+                    <label class="duration-option" for="dur_yearly">
+                        <input type="radio" name="duration_type" id="dur_yearly" value="yearly"
+                            onchange="showDurationPanel(this.value)">
+                        <div class="dur-card">
+                            <div style="font-size: 1.5rem;">📆</div>
+                            <strong>{{ ('Annual (52 weeks)' if g.locale == 'en' else 'שנתי (52 שבועות)' if g.locale ==
+                                'he' else 'Anual (52 semanas)') }}</strong>
+                        </div>
+                    </label>
+                    <label class="duration-option" for="dur_specific">
+                        <input type="radio" name="duration_type" id="dur_specific" value="specific"
+                            onchange="showDurationPanel(this.value)">
+                        <div class="dur-card">
+                            <div style="font-size: 1.5rem;">✨</div>
+                            <strong>{{ ('Specific Parashot' if g.locale == 'en' else 'פרשיות ספציפיות' if g.locale ==
+                                'he' else 'Parashas Específicas') }}</strong>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Specific parasha picker -->
+            <div id="specificPanel" style="display: none;" class="form-group">
+                <label style="color: var(--secondary); font-weight: 600;">
+                    {{ ('Select Parashot (hold Ctrl/Cmd for multiple):' if g.locale == 'en' else 'בחרו פרשיות (Ctrl/Cmd
+                    לריבוי):' if g.locale == 'he' else 'Selecciona las Parashas (mantén Ctrl para múltiples):') }}
+                </label>
+                <select name="parasha_ids" id="parasha_ids" multiple size="8" style="height: auto; min-height: 200px;">
+                    {% for p in future_parashot %}
+                    <option value="{{ p.id }}">{{ p.name_en if g.locale == 'en' else p.name_he if g.locale == 'he' else
+                        p.name_es }} — {{ p.week_end.strftime('%d/%m/%Y') }}</option>
+                    {% endfor %}
+                </select>
+                <div id="splitInfo" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--secondary);"></div>
+            </div>
+
+            <!-- Donor Name -->
+            <div class="form-group">
+                <label>{{ ('Donor Name' if g.locale == 'en' else 'שם התורם' if g.locale == 'he' else 'Nombre del
+                    Donante') }}</label>
+                <input type="text" name="donor_name"
+                    placeholder="{{ ('e.g: Israel Ben Shimon' if g.locale == 'en' else 'למשל: ישראל בן שמעון' if g.locale == 'he' else 'Ej: Israel Ben Shimon') }}"
+                    required>
+            </div>
+
+            <!-- Amount -->
+            <div class="form-group">
+                <label>{{ ('Total Amount ($)' if g.locale == 'en' else 'סכום כולל ($)' if g.locale == 'he' else 'Monto
+                    Total ($)') }}</label>
+                <input type="number" step="0.01" name="amount" id="amountInput" required onchange="updateSplitInfo()"
+                    oninput="updateSplitInfo()">
+                <div id="amountBreakdown" style="font-size: 0.85rem; color: var(--secondary); margin-top: 4px;"></div>
+            </div>
+
+            <!-- Motive -->
+            <div class="form-group">
+                <label>{{ ('Motive' if g.locale == 'en' else 'סיבה' if g.locale == 'he' else 'Motivo') }}</label>
+                <select name="type" id="user_donation_type" required onchange="updateUserPlaceholder()">
+                    <option value="le'iluy nishmat">{{ ('Le\'iluy Nishmat' if g.locale == 'en' else 'לעילוי נשמת' if
+                        g.locale == 'he' else 'Le\'iluy Nishmat (Elevación de alma)') }}</option>
+                    <option value="refua">{{ ('Refua Shelema' if g.locale == 'en' else 'רפואה שלמה' if g.locale == 'he'
+                        else 'Refua Shelema (Salud)') }}</option>
+                    <option value="hazlaja">{{ ('Hazlaja' if g.locale == 'en' else 'הצלחה' if g.locale == 'he' else
+                        'Hazlaja (Éxito)') }}</option>
+                    <option value="otro">{{ ('Other' if g.locale == 'en' else 'אחר' if g.locale == 'he' else 'Otro
+                        Motivo') }}</option>
+                </select>
+            </div>
+
+            <!-- Recipient -->
+            <div class="form-group">
+                <label id="user_recipient_label">{{ ('Recipient Name' if g.locale == 'en' else 'שם המוטב' if g.locale ==
+                    'he' else 'Nombre del Beneficiario') }}</label>
+                <input type="text" name="recipient"
+                    placeholder="{{ ('e.g: Rivka bat Rujel' if g.locale == 'en' else 'למשל: רבקה בת רחל' if g.locale == 'he' else 'Ej: Rivka Live bat Rujel') }}"
+                    required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">{{ ('Send Information'
+                if g.locale == 'en' else 'שלח מידע' if g.locale == 'he' else 'Enviar Información') }}</button>
+        </form>
+    </div>
+
+    <script>
+        function setQuickAmount(amount) {
+            const input = document.getElementById('amountInput');
+            input.value = amount;
+
+            // Scroll to form to show result
+            document.getElementById('donationForm').scrollIntoView({ behavior: 'smooth' });
+
+            // Highlight input briefly
+            input.classList.add('highlight-amount');
+            setTimeout(() => input.classList.remove('highlight-amount'), 1000);
+
+            updateSplitInfo();
+        }
+
+        function showDurationPanel(val) {
+            document.getElementById('specificPanel').style.display = (val === 'specific') ? 'block' : 'none';
+            updateSplitInfo();
+        }
+
+        function updateSplitInfo() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const durType = document.querySelector('input[name="duration_type"]:checked')?.value;
+            const breakdown = document.getElementById('amountBreakdown');
+            const splitInfo = document.getElementById('splitInfo');
+
+            let weeks = 1;
+            if (durType === 'monthly') weeks = 4;
+            else if (durType === 'yearly') weeks = 52;
+            else if (durType === 'specific') {
+                const sel = document.getElementById('parasha_ids');
+                weeks = [...sel.selectedOptions].length || 1;
+                if (splitInfo) splitInfo.textContent = weeks > 1 ? `→ ${weeks} parashas × $${(amount / weeks).toFixed(2)} c/u` : '';
+            }
+
+            if (weeks > 1) {
+                breakdown.textContent = `→ Se dividirá en ${weeks} semanas de $${(amount / weeks).toFixed(2)} c/u`;
+            } else {
+                breakdown.textContent = '';
+            }
+        }
+
+        // Update split when parasha list changes
+        document.getElementById('parasha_ids')?.addEventListener('change', updateSplitInfo);
+
+        function updateUserPlaceholder() {
+            const type = document.getElementById('user_donation_type').value;
+            const label = document.getElementById('user_recipient_label');
+            const lang = '{{ g.locale }}';
+            if (type === "le'iluy nishmat") {
+                label.innerText = (lang === 'en' ? 'Deceased Name (with father/mother)' : lang === 'he' ? 'שם הנפטר (עם שם האב/אם)' : 'Nombre del Difunto (con padre/madre)');
+            } else if (type === 'refua') {
+                label.innerText = (lang === 'en' ? 'Patient Name (with mother)' : lang === 'he' ? 'שם החולה (עם שם האם)' : 'Nombre del Enfermo (con madre)');
+            } else if (type === 'hazlaja') {
+                label.innerText = (lang === 'en' ? 'Beneficiary Name' : lang === 'he' ? 'שם המוטב' : 'Nombre del Beneficiario');
+            } else {
+                label.innerText = (lang === 'en' ? 'Enter motive and name' : lang === 'he' ? 'הזן סיבה ושם' : 'Escriba el motivo y nombre');
+            }
+        }
+    </script>
+
+    <!-- Duration option card styles -->
+    <style>
+        .quick-donation-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #fff;
+        }
+
+        .quick-donation-btn:hover {
+            border-color: var(--secondary);
+            background: rgba(197, 160, 89, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .quick-donation-btn .symbol {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        .quick-donation-btn .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .quick-donation-btn .label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .highlight-amount {
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.5) !important;
+            border-color: var(--secondary) !important;
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
+
+        .duration-option input[type="radio"] {
+            display: none;
+        }
+
+        .dur-card {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .duration-option input[type="radio"]:checked+.dur-card {
+            border-color: var(--secondary);
+            background: rgba(197, 160, 89, 0.15);
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .dur-card:hover {
+            border-color: var(--secondary);
+        }
+    </style>
+
+    <div class="stat-card" style="background: var(--glass); max-width: 700px; margin: 2rem auto 0; padding: 2rem;">
+        <h4 style="color: var(--secondary);">{{ ('Important' if g.locale == 'en' else 'חשוב' if g.locale == 'he' else
+            'Importante') }}</h4>
+        <p style="font-size: 0.9rem;">
+            {{ ('After making your donation by Bit or Transfer, please send a proof to the administrator so we can
+            register it and update the raffle pool immediately.' if g.locale == 'en' else 'לאחר ביצוע התרומה בביט או
+            בהפקדה, אנא שלחו הוכחת תשלום למנהל כדי שנוכל לרשום אותה ולעדכן את קופת ההגרלה באופן מיידי.' if g.locale ==
+            'he' else 'Después de realizar tu donación por Bit o Depósito, por favor envía un comprobante al
+            administrador para que podamos registrarla y actualizar el pozo del sorteo inmediatamente.') }}
+        </p>
+    </div>
+</div>
+{% endblock %}

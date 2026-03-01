@@ -1,0 +1,13 @@
+flask
+flask-sqlalchemy
+mysql-connector-python
+flask-login
+flask-babel
+flask-mail
+pytz
+python-dotenv
+requests
+bcrypt
+gunicorn
+whitenoise
+psycopg2-binary

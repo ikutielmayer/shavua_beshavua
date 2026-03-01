@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .halajot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        justify-content: center;
+    }
+
+    .halaja-card {
+        text-align: center !important;
+        padding: 2.5rem 2rem !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 400px;
+    }
+
+    .cat-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    @media (max-width: 600px) {
+        .halajot-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .halaja-card {
+            padding: 2rem 1.5rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="padding: 50px 5%; max-width: 1000px; margin: 0 auto;">
+    <h1 style="text-align: center; color: var(--secondary); margin-bottom: 1rem;">
+        {{ 'Learning Halajot' if g.locale == 'en' else 'לימוד הלכות' if g.locale == 'he' else 'Estudio de Halajot' }}
+    </h1>
+    <p style="text-align: center; margin-bottom: 4rem; opacity: 0.9; font-size: 1.1rem;">
+        {{ 'Deepen your knowledge on specific topics and earn double points!' if g.locale == 'en'
+        else 'העמיקו את הידע שלכם בנושאים ספציפיים וקבלו ניקוד כפול!' if g.locale == 'he'
+        else 'Profundiza tus conocimientos en temas específicos y gana el doble de puntos.' }}
+    </p>
+
+    <div class="halajot-grid">
+        {% for s in stats %}
+        <div class="stat-card halaja-card">
+            <div>
+                <div class="cat-icon">{{ s.cat.icon }}</div>
+                <h2 style="color: var(--secondary); margin-bottom: 0.5rem;">
+                    {{ s.cat.name_en if g.locale == 'en' else s.cat.name_he if g.locale == 'he' else s.cat.name_es }}
+                </h2>
+                <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 0.5rem;">
+                    {{ s.answered }} / {{ s.total }} {{ 'questions answered' if g.locale == 'en' else 'שאלות שנענו' if
+                    g.locale == 'he' else 'preguntas respondidas' }}
+                </div>
+                <div style="font-size: 0.85rem; color: #2196f3; font-weight: 700; margin-bottom: 1.5rem;">
+                    🕒 {{ 'Today:' if g.locale == 'en' else 'היום:' if g.locale == 'he' else 'Hoy:' }}
+                    {{ s.today_remaining }} {{ 'left' if g.locale == 'en' else 'נותרו' if g.locale == 'he' else
+                    'restantes' }}
+                </div>
+
+                <!-- Progress Bar -->
+                <div
+                    style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 2rem;">
+                    <div
+                        style="width: {{ s.percentage }}%; height: 100%; background: var(--secondary); transition: width 0.5s ease;">
+                    </div>
+                </div>
+            </div>
+
+            {% if s.answered < s.total %} <a href="{{ url_for('user.halajot_quiz', category_id=s.cat.id) }}"
+                class="btn btn-primary" style="width: 100%; text-align: center;">
+                {{ 'Start Learning' if g.locale == 'en' else 'התחל ללמוד' if g.locale == 'he' else 'Empezar a Estudiar'
+                }}
+                </a>
+                {% else %}
+                <div style="text-align: center; color: #4caf50; font-weight: 700;">
+                    ✓ {{ 'Completed' if g.locale == 'en' else 'הושלם' if g.locale == 'he' else 'Completado' }}
+                </div>
+                {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

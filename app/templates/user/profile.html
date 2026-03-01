@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%; max-width: 900px; margin: 0 auto;">
+    <div
+        style="display: flex; align-items: center; gap: 2rem; margin-bottom: 3rem; background: var(--glass); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border);">
+        <div
+            style="width: 80px; height: 80px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+            👤
+        </div>
+        <div>
+            <h1 style="color: var(--secondary); margin-bottom: 0.5rem;">{{ current_user.username }}</h1>
+            <p style="opacity: 0.8; margin-bottom: 0.5rem;">{{ current_user.email }}</p>
+            <div style="display: flex; gap: 1rem;">
+                <span class="badge"
+                    style="background: rgba(197, 160, 89, 0.2); color: var(--secondary); border: 1px solid var(--secondary); padding: 5px 15px; border-radius: 20px; font-weight: 700;">
+                    {{ current_user.points }} TOTAL POINTS
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-container"
+        style="padding: 0; margin-bottom: 4rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="stat-card">
+            <h3>{{ ('Parasha Points' if g.locale == 'en' else 'נקודות פרשה' if g.locale == 'he' else 'Puntos de
+                Parashá') }}</h3>
+            <div class="value" style="color: #64b5f6;">{{ parasha_points }}</div>
+            <p style="font-size: 0.8rem; opacity: 0.6;">(1 pt per correct answer)</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ ('Halaja Points' if g.locale == 'en' else 'נקודות הלכה' if g.locale == 'he' else 'Puntos de Halajá')
+                }}</h3>
+            <div class="value" style="color: var(--secondary);">{{ halaja_points }}</div>
+            <p style="font-size: 0.8rem; opacity: 0.6;">(2 pts per correct answer)</p>
+        </div>
+    </div>
+
+    <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">{{ ('Accumulation History' if g.locale == 'en' else
+        'היסטוריית צבירה' if g.locale == 'he' else 'Historial de Acumulación') }}</h2>
+    <div style="overflow-x: auto;">
+        <table
+            style="width: 100%; border-collapse: collapse; background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border);">
+            <thead>
+                <tr style="background: rgba(255,255,255,0.1); text-align: left;">
+                    <th style="padding: 1rem;">{{ ('Date' if g.locale == 'en' else 'תאריך' if g.locale == 'he' else
+                        'Fecha') }}</th>
+                    <th style="padding: 1rem;">{{ ('Type' if g.locale == 'en' else 'סוג' if g.locale == 'he' else
+                        'Tipo') }}</th>
+                    <th style="padding: 1rem;">{{ ('Topic' if g.locale == 'en' else 'נושא' if g.locale == 'he' else
+                        'Tema') }}</th>
+                    <th style="padding: 1rem;">{{ ('Status' if g.locale == 'en' else 'סטטוס' if g.locale == 'he' else
+                        'Estado') }}</th>
+                    <th style="padding: 1rem; text-align: right;">{{ ('Points' if g.locale == 'en' else 'נקודות' if
+                        g.locale == 'he' else 'Puntos') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in history %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 1rem; font-size: 0.85rem; opacity: 0.8;">{{ item.date.strftime('%d/%m/%Y %H:%M')
+                        }}</td>
+                    <td style="padding: 1rem;">
+                        <span
+                            style="font-size: 0.8rem; padding: 3px 8px; border-radius: 5px; background: {{ 'rgba(100, 181, 246, 0.1)' if item.type == 'Parashá' else 'rgba(197, 160, 89, 0.1)' }}; color: {{ '#64b5f6' if item.type == 'Parashá' else 'var(--secondary)' }};">
+                            {{ item.type }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">{{ item.detail }}</td>
+                    <td style="padding: 1rem;">
+                        <span
+                            style="color: {{ '#4caf50' if item.status == 'Correcta' else '#f44336' }}; font-weight: 600;">{{
+                            item.status }}</span>
+                    </td>
+                    <td
+                        style="padding: 1rem; text-align: right; font-weight: 800; color: {{ '#4caf50' if item.points > 0 else 'inherit' }};">
+                        +{{ item.points }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="padding: 3rem; text-align: center; opacity: 0.5;">
+                        {{ ('No activity yet.' if g.locale == 'en' else 'אין פעילות עדיין.' if g.locale == 'he' else
+                        'Aún no hay actividad registrada.') }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

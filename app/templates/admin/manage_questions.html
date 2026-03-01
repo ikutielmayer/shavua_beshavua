@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 style="color: var(--secondary);">Preguntas: {{ parasha.name_es }}</h1>
+        <a href="{{ url_for('admin.add_question', parasha_id=parasha.id) }}" class="btn btn-primary">+ Nueva
+            Pregunta</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+        {% for q in parasha.questions %}
+        <div class="stat-card" style="text-align: left; padding: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div style="flex: 1;">
+                    <p style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">{{ q.text_es }}</p>
+                    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 0.5rem; font-style: italic;">{{ q.text_en
+                        or '' }}</p>
+                    <p style="opacity: 0.7; font-size: 0.9rem; dir: rtl;">{{ q.text_he or '' }}</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{{ url_for('admin.edit_question', question_id=q.id) }}" class="btn"
+                        style="background: rgba(255,255,255,0.1); padding: 8px 15px; font-size: 0.8rem;">Editar</a>
+                    <form action="{{ url_for('admin.delete_question', question_id=q.id) }}" method="POST"
+                        onsubmit="return confirm('¿Eliminar esta pregunta?')">
+                        <button type="submit" class="btn"
+                            style="background: rgba(244,67,54,0.1); color: #f44336; border: 1px solid rgba(244,67,54,0.2); padding: 8px 15px; font-size: 0.8rem;">X</button>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+                <div style="{{ 'color: #4caf50; font-weight: 800;' if q.correct_option == 'a' else 'opacity: 0.8;' }}">
+                    <strong>A:</strong> {{ q.option_a_es }}
+                </div>
+                <div style="{{ 'color: #4caf50; font-weight: 800;' if q.correct_option == 'b' else 'opacity: 0.8;' }}">
+                    <strong>B:</strong> {{ q.option_b_es }}
+                </div>
+                <div style="{{ 'color: #4caf50; font-weight: 800;' if q.correct_option == 'c' else 'opacity: 0.8;' }}">
+                    <strong>C:</strong> {{ q.option_c_es }}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="stat-card" style="text-align: center; padding: 3rem;">
+            <p>No hay preguntas cargadas para esta parashá.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <a href="{{ url_for('admin.dashboard') }}" style="color: var(--secondary);">← Volver al Dashboard</a>
+    </div>
+</div>
+{% endblock %}

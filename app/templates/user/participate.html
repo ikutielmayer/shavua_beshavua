@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 50px 5%; max-width: 800px; margin: 0 auto;">
+    <h1 style="text-align: center; color: var(--secondary);">
+        {{ parasha.name_en if g.locale == 'en' else parasha.name_he if g.locale == 'he' else parasha.name_es }}
+    </h1>
+    <p style="text-align: center; margin-bottom: 2rem; opacity: 0.9;">
+        {{ 'Answer all questions to enter the raffle. You can answer in parts throughout the week!' if g.locale == 'en'
+        else 'ענו על כל השאלות כדי להיכנס להגרלה. ניתן לענות בחלקים במהלך השבוע!'
+        if g.locale == 'he' else 'Responde todas las preguntas para entrar en el sorteo. ¡Puedes responder por partes
+        durante la semana!' }}
+    </p>
+
+    <div
+        style="background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 2rem; color: #2196f3; font-weight: 700; display: inline-block; width: 100%;">
+        {% if g.locale == 'en' %}
+        🕒 Daily Limit: {{ today_remaining }} questions left for today
+        {% elif g.locale == 'he' %}
+        🕒 מכסה יומית: נותרו עוד {{ today_remaining }} שאלות להיום
+        {% else %}
+        🕒 Límite Diario: Te quedan {{ today_remaining }} preguntas por hoy
+        {% endif %}
+    </div>
+
+    {% if dedications %}
+    <div
+        style="background: rgba(197, 160, 89, 0.15); border: 1px solid var(--secondary); padding: 20px; border-radius: 15px; margin-bottom: 3rem; text-align: center;">
+        <h4 style="color: var(--secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">
+            {{ 'Learning Dedicated By' if g.locale == 'en' else 'לימוד מוקדש על ידי' if g.locale == 'he' else 'Estudio
+            Dedicado Por' }}
+        </h4>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+            {% for d in dedications %}
+            <div
+                style="background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 10px; font-style: italic;">
+                {% if d.donation_type == 'le\'iluy nishmat' %}
+                {{ 'Leiluy Nishmat' if g.locale == 'en' else 'לעילוי נשמת' if g.locale == 'he' else 'Leiluy Nishmat de'
+                }}
+                {% elif d.donation_type == 'refua' %}
+                {{ 'Refua Shelema for' if g.locale == 'en' else 'רפואה שלמה ל' if g.locale == 'he' else 'Refua Shelema
+                para' }}
+                {% elif d.donation_type == 'hazlaja' %}
+                {{ 'Success for' if g.locale == 'en' else 'הצלחה ל' if g.locale == 'he' else 'Hazlaja para' }}
+                {% endif %}
+                <strong>{{ d.recipient_name }}</strong>
+                <span style="font-size: 0.8rem; display: block; color: var(--secondary); margin-top: 5px;">
+                    ({{ 'Donated by' if g.locale == 'en' else 'נתרם על ידי' if g.locale == 'he' else 'Donado por' }}: {{
+                    d.donor_name }})
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form action="{{ url_for('user.submit_quiz') }}" method="POST">
+        <input type="hidden" name="parasha_id" value="{{ parasha.id }}">
+
+        {% for q in questions %}
+        <div class="question-card">
+            <h3>{{ loop.index }}. {{ q.text_en if g.locale == 'en' else q.text_he if g.locale == 'he' else q.text_es }}
+            </h3>
+            <div class="option-group">
+                {% for opt in q.options %}
+                <label class="option-btn">
+                    <input type="radio" name="q_{{ q.id }}" value="{{ opt.id }}">
+                    {{ opt.text_en if g.locale == 'en' else opt.text_he if g.locale == 'he' else opt.text_es }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <button type="submit" class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 50px;">
+                {{ 'Submit Answers' if g.locale == 'en' else 'שלח תשובות' if g.locale == 'he' else 'Enviar Respuestas'
+                }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

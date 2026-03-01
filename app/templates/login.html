@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <h2 style="text-align: center; color: var(--secondary);">{{ translate('login_title') }}</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label>{{ translate('email_or_username') }}</label>
+            <input type="text" name="email" required>
+        </div>
+        <div class="form-group">
+            <label>{{ translate('password') }}</label>
+            <input type="password" name="password" required>
+        </div>
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" name="remember"> {{ translate('remember_me') }}
+            </label>
+            <a href="{{ url_for('auth.forgot_password') }}" style="color: var(--secondary);">{{
+                translate('forgot_password_link') }}</a>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">{{ translate('enter_btn') }}</button>
+    </form>
+    <p style="text-align: center; margin-top: 1.5rem;">
+        {{ translate('dont_have_account') }} <a href="{{ url_for('auth.signup') }}" style="color: var(--secondary);">{{
+            translate('register_link') }}</a>
+    </p>
+</div>
+{% endblock %}
