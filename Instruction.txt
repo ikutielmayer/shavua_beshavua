@@ -1,0 +1,18 @@
+
+git config --global user.name "Asher Yekutiel Mayer"
+git config --global user.email "ikutielmayer@gmail.com"
+
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+
+git remote add origin https://github.com/ikutielmayer/shavua_beshavua.git
+git push -u origin main
+
+
+git remote add origin https://github.com/ikutielmayer/shavua_beshavua.git
+git branch -M main
+git push -u origin main
+
+SQLALCHEMY_DATABASE_URI=postgresql://shavua_beshavua_user:xB0Kj2Hjefe40qlvV90E62SH83yo9Ptr@dpg-d6i4l25m5p6s73busdog-a/shavua_beshavua

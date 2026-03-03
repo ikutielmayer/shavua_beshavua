@@ -294,7 +294,7 @@ def halajot():
 
     today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # DYNAMIC GENERATION: Ensure each user has 2 new questions available
+    # DYNAMIC GENERATION: Ensuring fresh, high-level Mishna Berura questions
     for cat in categories:
         # How many questions has this user answered in this category TODAY?
         today_cat_answers = HalajaAnswer.query.join(HalajaQuestion).filter(
@@ -303,37 +303,57 @@ def halajot():
             HalajaAnswer.timestamp >= today_start
         ).count()
 
+        if today_cat_answers >= 2:
+            continue # Already finished daily quota for this category
+
         # How many questions has this user NOT answered in this category?
-        unanswered_count = HalajaQuestion.query.filter_by(category_id=cat.id).filter(
+        unanswered = HalajaQuestion.query.filter_by(category_id=cat.id).filter(
             ~HalajaQuestion.id.in_(db.session.query(HalajaAnswer.question_id).filter_by(user_id=current_user.id))
-        ).count()
+        ).all()
         
-        if unanswered_count < 2 and today_cat_answers < 2:
-            # Generate 2 NEW instances from Bank
+        # If we have less than 2 unanswered, or if we want to "regenerate" (provide variety)
+        if len(unanswered) < 2:
+            # Generate NEW instances from Bank
             seed_pool = [q for q in HALAJA_BANK if q['category'] == cat.name_es or q['category'] == cat.name_en]
             if not seed_pool: seed_pool = HALAJA_BANK
             
-            # Filter out questions already in the DB for this category (answered or not)
-            existing_texts = db.session.query(HalajaQuestion.text_es).filter_by(category_id=cat.id).all()
-            existing_texts = [et[0] for et in existing_texts]
-            
+            # Filter out questions already in the DB (to avoid exact duplicates globally)
+            existing_texts = [q.text_es for q in HalajaQuestion.query.filter_by(category_id=cat.id).all()]
             fresh_seeds = [s for s in seed_pool if s['t_es'] not in existing_texts]
-            if not fresh_seeds: fresh_seeds = seed_pool # Recycle bank if all have been used at least once
             
-            # Add exactly what's needed to reach 2 unanswered
-            needed = 2 - unanswered_count
+            if not fresh_seeds: 
+                # If all bank questions are in DB, we just pick from bank anyway to allow multiple "instances" 
+                # but with different option orders (regenerated feel)
+                fresh_seeds = seed_pool 
+            
+            needed = 2 - len(unanswered)
             to_add = random.sample(fresh_seeds, min(needed, len(fresh_seeds)))
             
             for q_data in to_add:
+                # Randomize options and correct letter
+                opts = [
+                    {'es': q_data['a_es'], 'en': q_data['a_en'], 'he': q_data['a_he'], 'correct': True},
+                    {'es': q_data['b_es'], 'en': q_data['b_en'], 'he': q_data['b_he'], 'correct': False},
+                    {'es': q_data['c_es'], 'en': q_data['c_en'], 'he': q_data['c_he'], 'correct': False}
+                ]
+                random.shuffle(opts)
+                
+                correct_letter = 'a'
+                for i, letter in enumerate(['a', 'b', 'c']):
+                    if opts[i]['correct']:
+                        correct_letter = letter
+                
                 new_q = HalajaQuestion(
                     category_id=cat.id,
                     text_es=q_data['t_es'], text_en=q_data['t_en'], text_he=q_data['t_he'],
-                    option_a_es=q_data['a_es'], option_a_en=q_data['a_en'], option_a_he=q_data['a_he'],
-                    option_b_es=q_data['b_es'], option_b_en=q_data['b_en'], option_b_he=q_data['b_he'],
-                    option_c_es=q_data['c_es'], option_c_en=q_data['c_en'], option_c_he=q_data['c_he'],
-                    correct_option='a'
+                    option_a_es=opts[0]['es'], option_a_en=opts[0]['en'], option_a_he=opts[0]['he'],
+                    option_b_es=opts[1]['es'], option_b_en=opts[1]['en'], option_b_he=opts[1]['he'],
+                    option_c_es=opts[2]['es'], option_c_en=opts[2]['en'], option_c_he=opts[2]['he'],
+                    correct_option=correct_letter
                 )
                 db.session.add(new_q)
+    
+    db.session.commit()
     
     today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
